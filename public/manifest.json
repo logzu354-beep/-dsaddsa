@@ -1,0 +1,15 @@
+{
+  "name": "Ads Alert Dashboard",
+  "short_name": "Ads Alert",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fff5f7",
+  "theme_color": "#e91e8c",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/1071/1071063.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

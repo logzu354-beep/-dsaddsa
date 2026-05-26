@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<meta name="theme-color" content="#fce4ec"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+<meta name="apple-mobile-web-app-title" content="Vubeoprovip"/>
+<link rel="manifest" href="/manifest.json">
+<title>Vubeoprovip</title>
+<style>
+:root {
+  --bg:        #fff5f7;
+  --surface:   #ffffff;
+  --surface2:  #fce4ec;
+  --border:    #f8bbd0;
+  --border2:   #f48fb1;
+  --text:      #4a2030;
+  --muted:     #b07080;
+  --accent:    #e91e8c;
+  --accent2:   #f06292;
+  --danger:    #e53935;
+  --warning:   #fb8c00;
+  --success:   #43a047;
+  --info:      #e91e8c;
+  --danger-bg: #ffebee;
+  --warn-bg:   #fff3e0;
+  --ok-bg:     #f1f8e9;
+  --pink-light:#fce4ec;
+  --pink-mid:  #f8bbd0;
+  --pink-deep: #f48fb1;
+  --r:12px; --r-sm:8px;
+  --safe-top:env(safe-area-inset-top);
+  --safe-bot:env(safe-area-inset-bottom);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,'Segoe UI',system-ui,sans-serif;font-size:14px;min-height:100vh;padding-bottom:calc(66px + var(--safe-bot));}
+
+/* ── TOPBAR ── */
+.topbar{background:linear-gradient(135deg,#f8bbd0,#fce4ec);border-bottom:1px solid var(--pink-mid);padding:calc(10px + var(--safe-top)) 16px 10px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(233,30,140,.08);}
+.topbar-left{display:flex;align-items:center;gap:10px;}
+.logo{width:34px;height:34px;background:linear-gradient(135deg,#e91e8c,#f06292);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 2px 6px rgba(233,30,140,.3);}
+.app-name{font-size:16px;font-weight:700;background:linear-gradient(135deg,#c2185b,#e91e8c);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.badge-cnt{background:#e91e8c;color:#fff;font-size:11px;font-weight:700;border-radius:20px;padding:2px 7px;box-shadow:0 1px 4px rgba(233,30,140,.4);}
+.refresh-btn{width:32px;height:32px;border-radius:8px;border:1px solid var(--pink-deep);background:rgba(255,255,255,.6);color:#c2185b;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.refresh-time{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:4px;}
+.pulse{width:6px;height:6px;background:var(--success);border-radius:50%;animation:pulse 2s infinite;display:inline-block;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.push-btn { background: linear-gradient(135deg, #e91e8c, #f06292); color: white; border: none; padding: 6px 10px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 11px; box-shadow: 0 2px 6px rgba(233,30,140,0.4); }
+.push-btn:disabled { background: #ccc; cursor: not-allowed; box-shadow: none; color: #666; }
+
+/* ── TABS ── */
+.tabs{display:flex;background:var(--surface);border-bottom:1px solid var(--pink-mid);padding:0 12px;}
+.tab{flex:1;padding:10px 4px;font-size:12px;font-weight:500;color:var(--muted);cursor:pointer;border:none;background:transparent;border-bottom:2px solid transparent;transition:all .15s;display:flex;flex-direction:column;align-items:center;gap:2px;}
+.tab.active{color:#e91e8c;border-bottom-color:#e91e8c;}
+.tab-icon{font-size:18px;}
+
+/* ── MAIN ── */
+.main{padding:14px;}
+.page{display:none;}
+.page.active{display:block;}
+
+/* ── METRICS ── */
+.metrics{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+.metric{background:var(--surface);border:1px solid var(--pink-mid);border-radius:var(--r);padding:12px 14px;position:relative;overflow:hidden;}
+.metric::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#f8bbd0,#e91e8c);}
+.metric-label{font-size:11px;color:var(--muted);margin-bottom:4px;}
+.metric-value{font-size:20px;font-weight:700;}
+.metric-value.danger{color:var(--danger);}
+.metric-value.success{color:var(--success);}
+.metric-value.warning{color:var(--warning);}
+.metric-value.pink{color:#e91e8c;}
+.metric-sub{font-size:10px;color:var(--muted);margin-top:2px;}
+
+/* ── SECTION ── */
+.section-title{font-size:12px;font-weight:600;color:#c2185b;text-transform:uppercase;letter-spacing:.05em;margin:14px 0 8px;display:flex;align-items:center;gap:6px;}
+.section-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--pink-mid),transparent);}
+
+/* ── ALERT CARD ── */
+.alert-card{background:var(--surface);border:1px solid var(--pink-mid);border-radius:var(--r);padding:12px 14px;margin-bottom:8px;cursor:pointer;transition:all .15s;position:relative;}
+.alert-card:active{transform:scale(.99);}
+.alert-card.unread-error{border-left:3px solid var(--danger);background:#fff8f8;}
+.alert-card.unread-warn{border-left:3px solid var(--warning);background:#fffaf5;}
+.alert-card.unread-ok{border-left:3px solid var(--success);background:#f9fff5;}
+.alert-card.unread-info{border-left:3px solid #e91e8c;background:#fff5f9;}
+.unread-dot{width:8px;height:8px;background:#e91e8c;border-radius:50%;display:inline-block;flex-shrink:0;}
+.alert-top{display:flex;align-items:flex-start;gap:6px;margin-bottom:5px;}
+.alert-name{font-size:13px;font-weight:600;color:var(--text);flex:1;line-height:1.4;}
+.alert-time-lbl{font-size:10px;color:var(--muted);white-space:nowrap;margin-top:2px;}
+.alert-meta{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;align-items:center;}
+.badge{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:500;}
+.b-error{background:var(--danger-bg);color:var(--danger);}
+.b-warn{background:var(--warn-bg);color:var(--warning);}
+.b-ok{background:var(--ok-bg);color:var(--success);}
+.b-info{background:#fce4ec;color:#c2185b;}
+.b-card{background:var(--pink-light);color:#c2185b;border:1px solid var(--pink-mid);}
+.alert-amounts{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px;}
+.alert-amounts.three{grid-template-columns:1fr 1fr 1fr;}
+.amt{background:var(--pink-light);border-radius:var(--r-sm);padding:6px 10px;border:1px solid var(--pink-mid);}
+.amt-label{font-size:10px;color:var(--muted);margin-bottom:2px;}
+.amt-value{font-size:13px;font-weight:600;}
+.amt-value.danger{color:var(--danger);}
+.amt-value.warning{color:var(--warning);}
+.amt-value.pink{color:#e91e8c;}
+.forecast-row{margin-top:6px;font-size:12px;color:var(--muted);display:flex;align-items:center;gap:4px;}
+
+/* ── FILTER ── */
+.filter-bar{display:flex;gap:6px;margin-bottom:10px;overflow-x:auto;padding-bottom:2px;}
+.filter-bar::-webkit-scrollbar{display:none;}
+.fbtn{padding:5px 12px;border-radius:20px;border:1px solid var(--pink-mid);background:transparent;color:var(--muted);font-size:12px;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .15s;}
+.fbtn.active{background:linear-gradient(135deg,#e91e8c,#f06292);border-color:transparent;color:#fff;}
+
+/* ── BILLING ── */
+.billing-card{background:var(--surface);border:1px solid var(--pink-mid);border-radius:var(--r);padding:14px;margin-bottom:10px;}
+.billing-header{display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--pink-mid);}
+.billing-header-name{font-size:15px;font-weight:700;color:var(--text);}
+.billing-row{display:flex;justify-content:space-between;align-items:flex-start;padding:8px 0;border-bottom:1px solid #fce4ec;gap:8px;}
+.billing-row:last-of-type{border-bottom:none;}
+.billing-row-left{}
+.billing-row-name{font-size:13px;font-weight:500;color:var(--text);}
+.billing-row-sub{font-size:11px;color:var(--muted);margin-top:1px;}
+.billing-row-right{text-align:right;flex-shrink:0;}
+.billing-row-amt{font-size:14px;font-weight:700;color:var(--danger);}
+.billing-row-base{font-size:10px;color:var(--muted);}
+.billing-subtotal{display:flex;justify-content:space-between;padding:10px 0 0;margin-top:6px;border-top:1px solid var(--pink-mid);font-weight:600;font-size:14px;color:#c2185b;}
+.grand-box{background:linear-gradient(135deg,#fce4ec,#f8bbd0);border:1px solid var(--pink-deep);border-radius:var(--r);padding:20px;text-align:center;margin-top:12px;box-shadow:0 4px 16px rgba(233,30,140,.1);}
+.grand-label{font-size:12px;color:#c2185b;margin-bottom:6px;font-weight:500;}
+.grand-value{font-size:28px;font-weight:800;color:#c2185b;}
+.grand-sub{font-size:11px;color:var(--muted);margin-top:4px;}
+
+/* ── STATUS TAB ── */
+.status-card{background:var(--surface);border:1px solid var(--pink-mid);border-radius:var(--r);padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;}
+.status-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.status-dot.ok{background:var(--success);}
+.status-dot.error{background:var(--danger);}
+.status-dot.paused{background:#9e9e9e;}
+.status-dot.pending{background:var(--warning);}
+.status-info{flex:1;}
+.status-name{font-size:13px;font-weight:600;color:var(--text);}
+.status-meta{font-size:11px;color:var(--muted);margin-top:2px;display:flex;gap:8px;flex-wrap:wrap;}
+.status-right{text-align:right;flex-shrink:0;}
+.status-badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:500;}
+.forecast-text{font-size:11px;color:var(--muted);margin-top:3px;}
+
+/* ── MISC ── */
+.empty{text-align:center;padding:40px 20px;color:var(--muted);}
+.empty-icon{font-size:36px;margin-bottom:8px;}
+.loading{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:48px;color:var(--muted);}
+.spinner{width:28px;height:28px;border:2px solid var(--pink-mid);border-top-color:#e91e8c;border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.divider{height:1px;background:linear-gradient(90deg,transparent,var(--pink-mid),transparent);margin:12px 0;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="logo">🎀</div>
+    <span class="app-name">Vubeoprovip</span>
+    <span class="badge-cnt" id="badge-cnt" style="display:none">0</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <button id="enable-push" class="push-btn" onclick="enablePush()">Bật TB</button>
+    <span class="refresh-time"><span class="pulse"></span><span id="refresh-lbl" style="display:none"></span></span>
+    <button class="refresh-btn" onclick="loadData()">↺</button>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" id="tab-home" onclick="switchTab('home',this)">
+    <span class="tab-icon">🏠</span>Tổng quan
+  </button>
+  <button class="tab" id="tab-alerts" onclick="switchTab('alerts',this)" style="position:relative">
+    <span class="tab-icon">🔔</span>Cảnh báo
+    <span class="badge-cnt" id="nav-badge" style="display:none;position:absolute;top:4px;right:12px;font-size:9px;padding:1px 5px">0</span>
+  </button>
+  <button class="tab" id="tab-billing" onclick="switchTab('billing',this)">
+    <span class="tab-icon">💳</span>Thanh toán
+  </button>
+  <button class="tab" id="tab-status" onclick="switchTab('status',this)">
+    <span class="tab-icon">📊</span>Trạng thái
+  </button>
+</div>
+
+<div class="main">
+  <div id="loading" class="loading">
+    <div class="spinner"></div>
+    <span>Đang tải dữ liệu...</span>
+  </div>
+
+  <div class="page active" id="page-home">
+    <div class="metrics" id="metrics"></div>
+
+    <div id="daily-report-wrap" style="display:none">
+      <div class="section-title">📋 Báo cáo 22:00 hôm nay</div>
+      <div id="daily-report-list"></div>
+      <div id="daily-summary"></div>
+    </div>
+
+    <div class="section-title">🔔 Cảnh báo gần nhất</div>
+    <div id="recent-list"></div>
+  </div>
+
+  <div class="page" id="page-alerts">
+    <div class="filter-bar">
+      <button class="fbtn active" onclick="setFilter('ALL',this)">Tất cả</button>
+      <button class="fbtn" onclick="setFilter('ERROR',this)">❌ Lỗi TT</button>
+      <button class="fbtn" onclick="setFilter('DAILY_REPORT',this)">📋 Báo cáo</button>
+      <button class="fbtn" onclick="setFilter('OK',this)">✅ OK</button>
+      <button class="fbtn" onclick="setFilter('UNREAD',this)">🔴 Chưa đọc</button>
+    </div>
+    <div id="all-alerts-list"></div>
+  </div>
+
+  <div class="page" id="page-billing">
+    <div class="section-title">💳 Tổng hợp theo thẻ</div>
+    <div id="billing-list"></div>
+  </div>
+
+  <div class="page" id="page-status">
+    <div class="filter-bar">
+      <button class="fbtn active" onclick="setStatusFilter('ALL',this)">Tất cả</button>
+      <button class="fbtn" onclick="setStatusFilter('OK',this)">✅ OK</button>
+      <button class="fbtn" onclick="setStatusFilter('ERROR',this)">❌ Lỗi</button>
+      <button class="fbtn" onclick="setStatusFilter('PAUSED',this)">⏸ Dừng</button>
+    </div>
+    <div id="status-list"></div>
+  </div>
+</div>
+
+<script>
+// =======================================================
+// ✏️ SỬA 2 BIẾN NÀY TRƯỚC KHI LƯU NHÉ!
+// =======================================================
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyIB4B6WyG-PZ7Mu5_TWyu5JBYTDd8OW0ZKfN2gfEmqoy20b66h5FSwZ-TyNFG5WGt7oA/exec';
+const VAPID_PUBLIC_KEY = 'BGGilKREvksEAUbL2xGPiWPLDRTESldtfJryQ5W426Ba1x6deUy4ldcvYwvE87HckKgSYMXGOzYaWIKpH9VNTF0'; 
+// =======================================================
+
+let allAlerts  = [];
+let allStatus  = [];
+let curFilter  = 'ALL';
+let curStatus  = 'ALL';
+
+// ── PUSH NOTIFICATION ────────────────────────────────────
+async function enablePush() {
+  const btn = document.getElementById('enable-push');
+  if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+    alert('Trình duyệt không hỗ trợ Push Notification.');
+    return;
+  }
+  
+  try {
+    const perm = await Notification.requestPermission();
+    if (perm !== 'granted') throw new Error('Bạn đã từ chối cấp quyền.');
+    
+    const reg = await navigator.serviceWorker.register('/service-worker.js');
+    const sub = await reg.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+    });
+    
+    // Gửi token device về cho Google Sheets
+    fetch(SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: 'action=subscribe&sub=' + encodeURIComponent(JSON.stringify(sub))
+    });
+
+    btn.textContent = 'Đã bật TB';
+    btn.disabled = true;
+    alert('Đã kết nối thành công! Từ giờ báo cáo sẽ đẩy thẳng về máy bạn.');
+  } catch (e) { alert('Lỗi bật thông báo: ' + e.message); }
+}
+
+function urlBase64ToUint8Array(base64String) {
+  const padding = '='.repeat((4 - base64String.length % 4) % 4);
+  const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
+  const rawData = window.atob(base64);
+  const outputArray = new Uint8Array(rawData.length);
+  for (let i = 0; i < rawData.length; ++i) { outputArray[i] = rawData.charCodeAt(i); }
+  return outputArray;
+}
+
+// Kiểm tra xem máy này đã bật chưa để ẩn cái nút đi
+window.addEventListener('load', async () => {
+  if ('serviceWorker' in navigator) {
+    const reg = await navigator.serviceWorker.getRegistration();
+    if (reg) {
+      const sub = await reg.pushManager.getSubscription();
+      if (sub) {
+        const btn = document.getElementById('enable-push');
+        btn.textContent = 'Đã bật TB';
+        btn.disabled = true;
+      }
+    }
+  }
+});
+
+// ── LOAD ─────────────────────────────────────────────────
+function loadData() {
+  if (SCRIPT_URL.includes('ĐIỀN_LINK')) {
+    loadDemo();
+    document.getElementById('loading').style.display='none';
+    return;
+  }
+
+  fetch(SCRIPT_URL + '?action=getAlerts')
+    .then(r => r.json())
+    .then(d => {
+      if (d.ok) { allAlerts = d.alerts || []; }
+      renderAll();
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('refresh-lbl').textContent =
+        new Date().toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'});
+      document.getElementById('refresh-lbl').style.display = 'inline';
+    })
+    .catch(() => { loadDemo(); document.getElementById('loading').style.display='none'; });
+}
+
+function loadDemo() {
+  const ts = new Date().toLocaleString('vi-VN');
+  allAlerts = [
+    {id:'1',name:'Facebook Ads - Brand Vubeo',card:'Visa *4521',type:'DEN_NGUONG',
+     dailyBudg:10000000,projected:11100000,threshold:8000000,payAmt:8880000,
+     forecast:'🔥 Hôm nay (dưới 1 ngày)',daysToBill:'🟡 2 ngày (28/05/2026)',
+     triggerType:'DAILY_REPORT',timestamp:ts,read:false}
+  ];
+  allStatus = [
+    {name:'Facebook Ads - Brand Vubeo',card:'Visa *4521',status:'ERROR',
+     spentToday:10200000,dailyBudg:10000000,threshold:8000000,threshRemaining:0,
+     forecast:'🔴 Cần thanh toán ngay',daysToBill:'🟡 2 ngày (28/05/2026)',lastSync:ts}
+  ];
+  renderAll();
+}
+
+// ── RENDER ALL ────────────────────────────────────────────
+function renderAll() {
+  renderMetrics();
+  renderDailyReport();
+  renderRecent();
+  renderAllAlerts();
+  renderBilling();
+  renderStatusList();
+  updateBadge();
+}
+
+// ── METRICS ───────────────────────────────────────────────
+function renderMetrics() {
+  const unread   = allAlerts.filter(a=>!a.read).length;
+  const errors   = allAlerts.filter(a=>(a.type==='ERROR'||a.type==='UNSETTLED')&&!a.read).length;
+  const reports  = allAlerts.filter(a=>a.triggerType==='DAILY_REPORT'&&!a.read).length;
+  const totalPay = allAlerts.filter(a=>a.triggerType==='DAILY_REPORT'&&!a.read)
+                            .reduce((s,a)=>s+(a.payAmt||0),0);
+  document.getElementById('metrics').innerHTML = `
+    <div class="metric">
+      <div class="metric-label">Chưa đọc</div>
+      <div class="metric-value ${unread>0?'pink':'success'}">${unread}</div>
+      <div class="metric-sub">thông báo</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Lỗi thanh toán</div>
+      <div class="metric-value ${errors>0?'danger':'success'}">${errors}</div>
+      <div class="metric-sub">tài khoản</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Cần TT hôm nay</div>
+      <div class="metric-value ${reports>0?'warning':'success'}">${reports}</div>
+      <div class="metric-sub">tài khoản</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Tổng cần chuyển</div>
+      <div class="metric-value ${totalPay>0?'danger':'success'}" style="font-size:15px">${fmt(totalPay)}</div>
+      <div class="metric-sub">đã gồm VAT 11%</div>
+    </div>`;
+}
+
+// ── ALERT CARD HTML ───────────────────────────────────────
+function cardHtml(a) {
+  const isError  = a.type==='ERROR'||a.type==='UNSETTLED';
+  const isOk     = a.type==='OK';
+  const isReport = a.triggerType==='DAILY_REPORT';
+  let uc = '';
+  if (!a.read) uc = isError?'unread-error':isOk?'unread-ok':isReport?'unread-warn':'unread-info';
+
+  let badge='', amounts='';
+  if (a.type==='DEN_NGUONG') {
+    badge=`<span class="badge b-warn">🔔 Đến ngưỡng</span>`;
+    amounts=`<div class="alert-amounts three">
+      <div class="amt"><div class="amt-label">Budget × 1.11</div><div class="amt-value warning">${fmt(a.projected)}</div></div>
+      <div class="amt"><div class="amt-label">Ngưỡng</div><div class="amt-value">${fmt(a.threshold)}</div></div>
+      <div class="amt"><div class="amt-label">Cần thanh toán</div><div class="amt-value danger">${fmt(a.payAmt)}</div></div>
+    </div>`;
+  } else if (a.type==='DU_NO'||a.type==='UNSETTLED') {
+    badge=`<span class="badge b-error">💸 Dư nợ</span>`;
+    amounts=`<div class="alert-amounts">
+      <div class="amt"><div class="amt-label">Dư nợ gốc</div><div class="amt-value warning">${fmt(a.amtSpent||0)}</div></div>
+      <div class="amt"><div class="amt-label">Thanh toán (+11%)</div><div class="amt-value danger">${fmt(a.payAmt)}</div></div>
+    </div>`;
+  } else if (a.type==='ERROR') {
+    badge=`<span class="badge b-error">❌ Lỗi thanh toán</span>`;
+    if (a.payAmt) amounts=`<div class="alert-amounts">
+      <div class="amt"><div class="amt-label">Số tiền cần TT</div><div class="amt-value danger">${fmt(a.payAmt)}</div></div>
+    </div>`;
+  } else if (a.type==='OK') {
+    badge=`<span class="badge b-ok">✅ Đang chạy OK</span>`;
+  }
+
+  const triggerLbl = a.triggerType==='DAILY_REPORT'?'📋 Báo cáo 22h'
+    : a.triggerType==='REALTIME'?'⚡ Real-time'
+    : a.triggerType==='STATUS_UPDATE'?'🔄 Cập nhật 2h':'';
+
+  return `<div class="alert-card ${uc}" onclick="markRead('${a.id}',this)">
+    <div class="alert-top">
+      ${!a.read?'<span class="unread-dot"></span>':''}
+      <div class="alert-name">${a.name}</div>
+      <div class="alert-time-lbl">${a.timestamp||''}</div>
+    </div>
+    <div class="alert-meta">
+      ${badge}
+      ${a.card?`<span class="badge b-card">💳 ${a.card}</span>`:''}
+      ${triggerLbl?`<span style="font-size:11px;color:var(--muted)">${triggerLbl}</span>`:''}
+    </div>
+    ${amounts}
+    ${a.forecast?`<div class="forecast-row">⏱ ${a.forecast}</div>`:''}
+    ${a.daysToBill?`<div class="forecast-row">📅 Lập HĐ: ${a.daysToBill}</div>`:''}
+  </div>`;
+}
+
+// ── DAILY REPORT ──────────────────────────────────────────
+function renderDailyReport() {
+  const reps = allAlerts.filter(a=>a.triggerType==='DAILY_REPORT');
+  const wrap = document.getElementById('daily-report-wrap');
+  if (!reps.length) { wrap.style.display='none'; return; }
+  wrap.style.display='block';
+  document.getElementById('daily-report-list').innerHTML = reps.map(cardHtml).join('');
+
+  const cardMap={};
+  reps.forEach(a=>{
+    if (!a.card||!a.payAmt) return;
+    if (!cardMap[a.card]) cardMap[a.card]=0;
+    cardMap[a.card]+=a.payAmt;
+  });
+  const grand=Object.values(cardMap).reduce((s,v)=>s+v,0);
+  if (!grand) { document.getElementById('daily-summary').innerHTML=''; return; }
+
+  const today=new Date().toLocaleDateString('vi-VN',{month:'long',day:'numeric'});
+  document.getElementById('daily-summary').innerHTML=`
+    <div class="billing-card" style="margin-top:8px">
+      ${Object.entries(cardMap).map(([c,t])=>`
+        <div class="billing-row">
+          <span style="font-weight:500">💳 ${c}</span>
+          <span style="color:#c2185b;font-weight:700">${fmt(t)}</span>
+        </div>`).join('')}
+      <div class="billing-subtotal">
+        <span>🔴 Tổng cần chuyển ${today}</span>
+        <span>${fmt(grand)}</span>
+      </div>
+    </div>`;
+}
+
+// ── RECENT ────────────────────────────────────────────────
+function renderRecent() {
+  const list = allAlerts.filter(a=>a.triggerType!=='DAILY_REPORT').slice(0,6);
+  document.getElementById('recent-list').innerHTML = list.length
+    ? list.map(cardHtml).join('')
+    : `<div class="empty"><div class="empty-icon">🌸</div><div>Không có cảnh báo nào</div></div>`;
+}
+
+// ── ALL ALERTS ────────────────────────────────────────────
+function renderAllAlerts() {
+  let list = allAlerts;
+  if (curFilter==='ERROR') list=allAlerts.filter(a=>a.type==='ERROR'||a.type==='UNSETTLED');
+  else if (curFilter==='DAILY_REPORT') list=allAlerts.filter(a=>a.triggerType==='DAILY_REPORT');
+  else if (curFilter==='OK') list=allAlerts.filter(a=>a.type==='OK');
+  else if (curFilter==='UNREAD') list=allAlerts.filter(a=>!a.read);
+  document.getElementById('all-alerts-list').innerHTML = list.length
+    ? list.map(cardHtml).join('')
+    : `<div class="empty"><div class="empty-icon">🌸</div><div>Không có mục nào</div></div>`;
+}
+
+// ── BILLING ───────────────────────────────────────────────
+function renderBilling() {
+  const reps=allAlerts.filter(a=>a.triggerType==='DAILY_REPORT'&&!a.read&&a.payAmt>0);
+  if (!reps.length) {
+    document.getElementById('billing-list').innerHTML=`<div class="empty"><div class="empty-icon">🌸</div><div>Không có khoản nào cần thanh toán</div></div>`;
+    return;
+  }
+  const cardMap={};
+  reps.forEach(a=>{
+    if (!cardMap[a.card]) cardMap[a.card]={card:a.card,items:[],total:0};
+    cardMap[a.card].items.push(a);
+    cardMap[a.card].total+=a.payAmt;
+  });
+  const grand=Object.values(cardMap).reduce((s,c)=>s+c.total,0);
+  const today=new Date().toLocaleDateString('vi-VN',{year:'numeric',month:'long',day:'numeric'});
+
+  let html=Object.values(cardMap).map(c=>`
+    <div class="billing-card">
+      <div class="billing-header">
+        <span style="font-size:22px">💳</span>
+        <div>
+          <div class="billing-header-name">${c.card}</div>
+          <div style="font-size:11px;color:var(--muted)">${c.items.length} tài khoản</div>
+        </div>
+      </div>
+      ${c.items.map(a=>`
+        <div class="billing-row">
+          <div class="billing-row-left">
+            <div class="billing-row-name">${a.name}</div>
+            <div class="billing-row-sub">${a.type==='DU_NO'?'Dư nợ × 1.11':'Budget × 1.11 > ngưỡng'}</div>
+          </div>
+          <div class="billing-row-right">
+            <div class="billing-row-amt">${fmt(a.payAmt)}</div>
+            <div class="billing-row-base">gốc: ${fmt(a.payAmt/1.11)}</div>
+          </div>
+        </div>`).join('')}
+      <div class="billing-subtotal">
+        <span>Tổng thẻ này</span><span>${fmt(c.total)}</span>
+      </div>
+    </div>`).join('');
+
+  html+=`<div class="grand-box">
+    <div class="grand-label">💰 Tổng cần chuyển</div>
+    <div class="grand-value">${fmt(grand)}</div>
+    <div class="grand-sub">${today} · Đã gồm VAT 11%</div>
+  </div>`;
+
+  document.getElementById('billing-list').innerHTML=html;
+}
+
+// ── STATUS LIST ───────────────────────────────────────────
+function renderStatusList() {
+  const source = allStatus.length ? allStatus : buildStatusFromAlerts();
+  let list = source;
+  if (curStatus==='OK') list=source.filter(s=>s.status==='OK');
+  else if (curStatus==='ERROR') list=source.filter(s=>s.status==='ERROR'||s.status==='UNSETTLED');
+  else if (curStatus==='PAUSED') list=source.filter(s=>s.status==='PAUSED');
+
+  if (!list.length) {
+    document.getElementById('status-list').innerHTML=`<div class="empty"><div class="empty-icon">🌸</div><div>Không có dữ liệu</div></div>`;
+    return;
+  }
+
+  document.getElementById('status-list').innerHTML = list.map(s=>{
+    const dotClass = s.status==='OK'?'ok':s.status==='ERROR'||s.status==='UNSETTLED'?'error':s.status==='PAUSED'?'paused':'pending';
+    const badgeClass = s.status==='OK'?'b-ok':s.status==='ERROR'||s.status==='UNSETTLED'?'b-error':'b-warn';
+    const statusLbl = s.status==='OK'?'✅ OK':s.status==='ERROR'?'❌ Lỗi TT':s.status==='UNSETTLED'?'💸 Dư nợ':s.status==='PAUSED'?'⏸ Dừng':'⏳ Pending';
+    return `<div class="status-card">
+      <span class="status-dot ${dotClass}"></span>
+      <div class="status-info">
+        <div class="status-name">${s.name}</div>
+        <div class="status-meta">
+          ${s.card?`<span>💳 ${s.card}</span>`:''}
+          ${s.spentToday!=null?`<span>Chi: ${fmt(s.spentToday)}</span>`:''}
+          ${s.threshRemaining>0?`<span>Còn: ${fmt(s.threshRemaining)}</span>`:''}
+        </div>
+        <div class="forecast-text">${s.forecast||''}</div>
+        ${s.daysToBill?`<div class="forecast-text">📅 Lập HĐ: ${s.daysToBill}</div>`:''}
+      </div>
+      <div class="status-right">
+        <span class="status-badge ${badgeClass}">${statusLbl}</span>
+        <div class="forecast-text" style="margin-top:4px">${s.lastSync?'Sync: '+s.lastSync:''}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function buildStatusFromAlerts() {
+  const map={};
+  allAlerts.forEach(a=>{
+    if (!map[a.name]) map[a.name]={
+      name:a.name, card:a.card||'',
+      status:a.type==='OK'?'OK':a.type==='ERROR'?'ERROR':a.type==='UNSETTLED'?'UNSETTLED':'OK',
+      spentToday:a.spentToday||null, threshRemaining:null,
+      forecast:a.forecast||'', daysToBill:a.daysToBill||'',
+      lastSync:a.timestamp||'',
+    };
+  });
+  return Object.values(map);
+}
+
+// ── ACTIONS ───────────────────────────────────────────────
+function markRead(id, el) {
+  if (SCRIPT_URL.includes('ĐIỀN_LINK')) return;
+  const a=allAlerts.find(x=>x.id===id);
+  if (a&&!a.read) {
+    a.read=true;
+    el.classList.remove('unread-error','unread-warn','unread-ok','unread-info');
+    const dot=el.querySelector('.unread-dot'); if(dot) dot.remove();
+    updateBadge(); renderMetrics();
+    fetch(SCRIPT_URL+'?action=markRead&id='+id).catch(()=>{});
+  }
+}
+
+function updateBadge() {
+  const n=allAlerts.filter(a=>!a.read).length;
+  ['badge-cnt','nav-badge'].forEach(id=>{
+    const el=document.getElementById(id);
+    el.textContent=n; el.style.display=n?'':'none';
+  });
+}
+
+function switchTab(name, btn) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function setFilter(f,btn) {
+  curFilter=f;
+  document.querySelectorAll('.filter-bar .fbtn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderAllAlerts();
+}
+
+function setStatusFilter(f,btn) {
+  curStatus=f;
+  document.querySelectorAll('#page-status .fbtn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderStatusList();
+}
+
+function fmt(n){return Math.round(n||0).toLocaleString('vi-VN')+' ₫';}
+
+// ── INIT ──────────────────────────────────────────────────
+loadData();
+setInterval(loadData, 5*60*1000);
+</script>
+</body>
+</html>

@@ -6,9 +6,9 @@
 <meta name="theme-color" content="#fce4ec"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
-<meta name="apple-mobile-web-app-title" content="Vubeoprovip"/>
+<meta name="apple-mobile-web-app-title" content="Vubeoprovjp"/>
 <link rel="manifest" href="/manifest.json">
-<title>Vubeoprovip</title>
+<title>Vubeoprovjp</title>
 <style>
 :root {
   --bg:        #fff5f7;
@@ -47,7 +47,7 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,'Segoe UI'
 .refresh-time{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:4px;}
 .pulse{width:6px;height:6px;background:var(--success);border-radius:50%;animation:pulse 2s infinite;display:inline-block;}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.push-btn { background: linear-gradient(135deg, #e91e8c, #f06292); color: white; border: none; padding: 6px 10px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 11px; box-shadow: 0 2px 6px rgba(233,30,140,0.4); }
+.push-btn { background: linear-gradient(135deg, #e91e8c, #f06292); color: white; border: none; padding: 6px 10px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 11px; box-shadow: 0 2px 6px rgba(233,30,140,0.4); margin-right: 4px; }
 .push-btn:disabled { background: #ccc; cursor: not-allowed; box-shadow: none; color: #666; }
 
 /* ── TABS ── */
@@ -157,12 +157,12 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,'Segoe UI'
 <div class="topbar">
   <div class="topbar-left">
     <div class="logo">🎀</div>
-    <span class="app-name">Vubeoprovip</span>
+    <span class="app-name">Vubeoprovjp</span>
     <span class="badge-cnt" id="badge-cnt" style="display:none">0</span>
   </div>
   <div style="display:flex;align-items:center;gap:8px;">
     <button id="enable-push" class="push-btn" onclick="enablePush()">Bật TB</button>
-    <span class="refresh-time"><span class="pulse"></span><span id="refresh-lbl" style="display:none"></span></span>
+    <span class="refresh-time"><span class="pulse"></span><span id="refresh-lbl">Đang tải...</span></span>
     <button class="refresh-btn" onclick="loadData()">↺</button>
   </div>
 </div>
@@ -231,10 +231,10 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,'Segoe UI'
 
 <script>
 // =======================================================
-// ✏️ SỬA 2 BIẾN NÀY TRƯỚC KHI LƯU NHÉ!
+// ✏️ SỬA 2 DÒNG NÀY RỒI MỚI LƯU TRÊN GITHUB NHÉ!
 // =======================================================
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyIB4B6WyG-PZ7Mu5_TWyu5JBYTDd8OW0ZKfN2gfEmqoy20b66h5FSwZ-TyNFG5WGt7oA/exec';
-const VAPID_PUBLIC_KEY = 'BGGilKREvksEAUbL2xGPiWPLDRTESldtfJryQ5W426Ba1x6deUy4ldcvYwvE87HckKgSYMXGOzYaWIKpH9VNTF0'; 
+const VAPID_PUBLIC_KEY = 'BGGilKREvksEAUbL2xGPiWPLDRTESldtfJryQ5W426Ba1x6deUy4ldcvYwvE87HckKgSYMXGOzYaWIKpH9VNTF0';
 // =======================================================
 
 let allAlerts  = [];
@@ -260,7 +260,7 @@ async function enablePush() {
       applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
     });
     
-    // Gửi token device về cho Google Sheets
+    // Gửi mã thiết bị lên Google Sheets
     fetch(SCRIPT_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -313,7 +313,6 @@ function loadData() {
       document.getElementById('loading').style.display = 'none';
       document.getElementById('refresh-lbl').textContent =
         new Date().toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'});
-      document.getElementById('refresh-lbl').style.display = 'inline';
     })
     .catch(() => { loadDemo(); document.getElementById('loading').style.display='none'; });
 }
@@ -321,17 +320,41 @@ function loadData() {
 function loadDemo() {
   const ts = new Date().toLocaleString('vi-VN');
   allAlerts = [
-    {id:'1',name:'Facebook Ads - Brand Vubeo',card:'Visa *4521',type:'DEN_NGUONG',
+    {id:'1',name:'Facebook Ads - Brand Comimo Baby',card:'Visa *4521',type:'DEN_NGUONG',
      dailyBudg:10000000,projected:11100000,threshold:8000000,payAmt:8880000,
      forecast:'🔥 Hôm nay (dưới 1 ngày)',daysToBill:'🟡 2 ngày (28/05/2026)',
-     triggerType:'DAILY_REPORT',timestamp:ts,read:false}
+     triggerType:'DAILY_REPORT',timestamp:ts,read:false},
+    {id:'2',name:'Facebook Ads - Performance Scale',card:'Visa *4521',type:'DU_NO',
+     amtSpent:5500000,payAmt:6105000,
+     triggerType:'DAILY_REPORT',timestamp:ts,read:false},
+    {id:'3',name:'Facebook Retarget Campaign',card:'MC *8834',type:'DEN_NGUONG',
+     dailyBudg:6000000,projected:6660000,threshold:5000000,payAmt:5550000,
+     forecast:'📅 Ngày mai',daysToBill:'🟢 8 ngày (03/06/2026)',
+     triggerType:'DAILY_REPORT',timestamp:ts,read:false},
+    {id:'4',name:'Ads Lookalike Comimo Baby',card:'MC *8834',type:'ERROR',
+     debt:3000000,payAmt:3330000,triggerType:'REALTIME',timestamp:ts,read:false},
+    {id:'5',name:'Traffic Campaign A',card:'Visa *4521',type:'OK',
+     triggerType:'STATUS_UPDATE',timestamp:ts,read:true},
   ];
   allStatus = [
-    {name:'Facebook Ads - Brand Vubeo',card:'Visa *4521',status:'ERROR',
+    {name:'Facebook Ads - Brand Comimo Baby',card:'Visa *4521',status:'ERROR',
      spentToday:10200000,dailyBudg:10000000,threshold:8000000,threshRemaining:0,
-     forecast:'🔴 Cần thanh toán ngay',daysToBill:'🟡 2 ngày (28/05/2026)',lastSync:ts}
+     forecast:'🔴 Cần thanh toán ngay',daysToBill:'🟡 2 ngày (28/05/2026)',lastSync:ts},
+    {name:'Facebook Ads - Performance Scale',card:'Visa *4521',status:'UNSETTLED',
+     spentToday:5500000,dailyBudg:5000000,threshold:5000000,threshRemaining:0,
+     forecast:'🔴 Cần thanh toán ngay',daysToBill:'🟡 2 ngày (28/05/2026)',lastSync:ts},
+    {name:'Facebook Retarget Campaign',card:'MC *8834',status:'OK',
+     spentToday:3200000,dailyBudg:6000000,threshold:5000000,threshRemaining:1800000,
+     forecast:'📅 Ngày mai',daysToBill:'🟢 8 ngày (03/06/2026)',lastSync:ts},
+    {name:'Traffic Campaign A',card:'Visa *4521',status:'OK',
+     spentToday:1500000,dailyBudg:3000000,threshold:4000000,threshRemaining:2500000,
+     forecast:'⏳ ~4 ngày nữa',daysToBill:'🟢 8 ngày (03/06/2026)',lastSync:ts},
+    {name:'Ads Lookalike Comimo Baby',card:'MC *8834',status:'PAUSED',
+     spentToday:0,dailyBudg:0,threshold:2000000,threshRemaining:2000000,
+     forecast:'⚪ Đang dừng',daysToBill:'🟢 8 ngày (03/06/2026)',lastSync:ts},
   ];
   renderAll();
+  document.getElementById('refresh-lbl').textContent = 'Demo mode';
 }
 
 // ── RENDER ALL ────────────────────────────────────────────
@@ -582,7 +605,6 @@ function buildStatusFromAlerts() {
 
 // ── ACTIONS ───────────────────────────────────────────────
 function markRead(id, el) {
-  if (SCRIPT_URL.includes('ĐIỀN_LINK')) return;
   const a=allAlerts.find(x=>x.id===id);
   if (a&&!a.read) {
     a.read=true;

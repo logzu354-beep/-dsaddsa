@@ -231,7 +231,7 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,'Segoe UI'
 
 <script>
 // =======================================================
-// ✏️ SỬA 2 DÒNG NÀY RỒI MỚI LƯU TRÊN GITHUB NHÉ!
+// 🛑 NHỚ DÁN LẠI LINK VÀ KEY CỦA BẠN VÀO ĐÂY NHÉ!
 // =======================================================
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyIB4B6WyG-PZ7Mu5_TWyu5JBYTDd8OW0ZKfN2gfEmqoy20b66h5FSwZ-TyNFG5WGt7oA/exec';
 const VAPID_PUBLIC_KEY = 'BGGilKREvksEAUbL2xGPiWPLDRTESldtfJryQ5W426Ba1x6deUy4ldcvYwvE87HckKgSYMXGOzYaWIKpH9VNTF0';
@@ -254,13 +254,14 @@ async function enablePush() {
     const perm = await Notification.requestPermission();
     if (perm !== 'granted') throw new Error('Bạn đã từ chối cấp quyền.');
     
-    const reg = await navigator.serviceWorker.register('/service-worker.js');
+    await navigator.serviceWorker.register('/service-worker.js');
+    const reg = await navigator.serviceWorker.ready;
+    
     const sub = await reg.pushManager.subscribe({
       userVisibleOnly: true,
       applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
     });
     
-    // Gửi mã thiết bị lên Google Sheets
     fetch(SCRIPT_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -282,7 +283,6 @@ function urlBase64ToUint8Array(base64String) {
   return outputArray;
 }
 
-// Kiểm tra xem máy này đã bật chưa để ẩn cái nút đi
 window.addEventListener('load', async () => {
   if ('serviceWorker' in navigator) {
     const reg = await navigator.serviceWorker.getRegistration();
@@ -297,7 +297,7 @@ window.addEventListener('load', async () => {
   }
 });
 
-// ── LOAD ─────────────────────────────────────────────────
+// ── LOAD DỮ LIỆU ─────────────────────────────────────────
 function loadData() {
   if (SCRIPT_URL.includes('ĐIỀN_LINK')) {
     loadDemo();
@@ -308,7 +308,10 @@ function loadData() {
   fetch(SCRIPT_URL + '?action=getAlerts')
     .then(r => r.json())
     .then(d => {
-      if (d.ok) { allAlerts = d.alerts || []; }
+      if (d.ok) { 
+        allAlerts = d.alerts || []; 
+        window.dailyEstimateAmt = d.dailyEstimate || 0;
+      }
       renderAll();
       document.getElementById('loading').style.display = 'none';
       document.getElementById('refresh-lbl').textContent =
@@ -323,41 +326,19 @@ function loadDemo() {
     {id:'1',name:'Facebook Ads - Brand Comimo Baby',card:'Visa *4521',type:'DEN_NGUONG',
      dailyBudg:10000000,projected:11100000,threshold:8000000,payAmt:8880000,
      forecast:'🔥 Hôm nay (dưới 1 ngày)',daysToBill:'🟡 2 ngày (28/05/2026)',
-     triggerType:'DAILY_REPORT',timestamp:ts,read:false},
-    {id:'2',name:'Facebook Ads - Performance Scale',card:'Visa *4521',type:'DU_NO',
-     amtSpent:5500000,payAmt:6105000,
-     triggerType:'DAILY_REPORT',timestamp:ts,read:false},
-    {id:'3',name:'Facebook Retarget Campaign',card:'MC *8834',type:'DEN_NGUONG',
-     dailyBudg:6000000,projected:6660000,threshold:5000000,payAmt:5550000,
-     forecast:'📅 Ngày mai',daysToBill:'🟢 8 ngày (03/06/2026)',
-     triggerType:'DAILY_REPORT',timestamp:ts,read:false},
-    {id:'4',name:'Ads Lookalike Comimo Baby',card:'MC *8834',type:'ERROR',
-     debt:3000000,payAmt:3330000,triggerType:'REALTIME',timestamp:ts,read:false},
-    {id:'5',name:'Traffic Campaign A',card:'Visa *4521',type:'OK',
-     triggerType:'STATUS_UPDATE',timestamp:ts,read:true},
+     triggerType:'DAILY_REPORT',timestamp:ts,read:false}
   ];
   allStatus = [
     {name:'Facebook Ads - Brand Comimo Baby',card:'Visa *4521',status:'ERROR',
      spentToday:10200000,dailyBudg:10000000,threshold:8000000,threshRemaining:0,
-     forecast:'🔴 Cần thanh toán ngay',daysToBill:'🟡 2 ngày (28/05/2026)',lastSync:ts},
-    {name:'Facebook Ads - Performance Scale',card:'Visa *4521',status:'UNSETTLED',
-     spentToday:5500000,dailyBudg:5000000,threshold:5000000,threshRemaining:0,
-     forecast:'🔴 Cần thanh toán ngay',daysToBill:'🟡 2 ngày (28/05/2026)',lastSync:ts},
-    {name:'Facebook Retarget Campaign',card:'MC *8834',status:'OK',
-     spentToday:3200000,dailyBudg:6000000,threshold:5000000,threshRemaining:1800000,
-     forecast:'📅 Ngày mai',daysToBill:'🟢 8 ngày (03/06/2026)',lastSync:ts},
-    {name:'Traffic Campaign A',card:'Visa *4521',status:'OK',
-     spentToday:1500000,dailyBudg:3000000,threshold:4000000,threshRemaining:2500000,
-     forecast:'⏳ ~4 ngày nữa',daysToBill:'🟢 8 ngày (03/06/2026)',lastSync:ts},
-    {name:'Ads Lookalike Comimo Baby',card:'MC *8834',status:'PAUSED',
-     spentToday:0,dailyBudg:0,threshold:2000000,threshRemaining:2000000,
-     forecast:'⚪ Đang dừng',daysToBill:'🟢 8 ngày (03/06/2026)',lastSync:ts},
+     forecast:'🔴 Cần thanh toán ngay',daysToBill:'🟡 2 ngày (28/05/2026)',lastSync:ts}
   ];
+  window.dailyEstimateAmt = 8880000;
   renderAll();
   document.getElementById('refresh-lbl').textContent = 'Demo mode';
 }
 
-// ── RENDER ALL ────────────────────────────────────────────
+// ── RENDER UI TÍCH HỢP BẢNG DỰ KIẾN MỚI ──────────────────
 function renderAll() {
   renderMetrics();
   renderDailyReport();
@@ -368,14 +349,24 @@ function renderAll() {
   updateBadge();
 }
 
-// ── METRICS ───────────────────────────────────────────────
 function renderMetrics() {
   const unread   = allAlerts.filter(a=>!a.read).length;
   const errors   = allAlerts.filter(a=>(a.type==='ERROR'||a.type==='UNSETTLED')&&!a.read).length;
   const reports  = allAlerts.filter(a=>a.triggerType==='DAILY_REPORT'&&!a.read).length;
-  const totalPay = allAlerts.filter(a=>a.triggerType==='DAILY_REPORT'&&!a.read)
-                            .reduce((s,a)=>s+(a.payAmt||0),0);
-  document.getElementById('metrics').innerHTML = `
+  
+  const dailyEstimate = window.dailyEstimateAmt || 0;
+
+  let html = `
+    <div class="metric" style="grid-column: span 2; background: linear-gradient(135deg, #fff5f9, #fce4ec); border: 2px solid #f48fb1; padding: 14px;">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <div class="metric-label" style="color:#c2185b; font-weight:bold; font-size: 12px; margin-bottom: 6px;">💰 DỰ KIẾN THANH TOÁN 22:00</div>
+          <div class="metric-value" style="color:#e91e8c; font-size:24px;">${fmt(dailyEstimate)}</div>
+        </div>
+        <button class="push-btn" onclick="triggerDailyReport()" id="btn-report-now" style="font-size: 12px; padding: 8px 12px;">Báo cáo ngay</button>
+      </div>
+    </div>
+
     <div class="metric">
       <div class="metric-label">Chưa đọc</div>
       <div class="metric-value ${unread>0?'pink':'success'}">${unread}</div>
@@ -386,19 +377,29 @@ function renderMetrics() {
       <div class="metric-value ${errors>0?'danger':'success'}">${errors}</div>
       <div class="metric-sub">tài khoản</div>
     </div>
-    <div class="metric">
-      <div class="metric-label">Cần TT hôm nay</div>
-      <div class="metric-value ${reports>0?'warning':'success'}">${reports}</div>
-      <div class="metric-sub">tài khoản</div>
-    </div>
-    <div class="metric">
-      <div class="metric-label">Tổng cần chuyển</div>
-      <div class="metric-value ${totalPay>0?'danger':'success'}" style="font-size:15px">${fmt(totalPay)}</div>
-      <div class="metric-sub">đã gồm VAT 11%</div>
-    </div>`;
+  `;
+  document.getElementById('metrics').innerHTML = html;
 }
 
-// ── ALERT CARD HTML ───────────────────────────────────────
+function triggerDailyReport() {
+  const btn = document.getElementById('btn-report-now');
+  btn.disabled = true;
+  btn.textContent = 'Đang gửi...';
+  
+  fetch(SCRIPT_URL + '?action=triggerDailyNow')
+    .then(r => r.json())
+    .then(d => {
+      if (d.ok) {
+        alert('Đã ép hệ thống quét và bắn thông báo Push về điện thoại!');
+        loadData();
+      }
+    })
+    .finally(() => {
+      btn.disabled = false;
+      btn.textContent = 'Báo cáo ngay';
+    });
+}
+
 function cardHtml(a) {
   const isError  = a.type==='ERROR'||a.type==='UNSETTLED';
   const isOk     = a.type==='OK';
@@ -450,7 +451,6 @@ function cardHtml(a) {
   </div>`;
 }
 
-// ── DAILY REPORT ──────────────────────────────────────────
 function renderDailyReport() {
   const reps = allAlerts.filter(a=>a.triggerType==='DAILY_REPORT');
   const wrap = document.getElementById('daily-report-wrap');
@@ -482,7 +482,6 @@ function renderDailyReport() {
     </div>`;
 }
 
-// ── RECENT ────────────────────────────────────────────────
 function renderRecent() {
   const list = allAlerts.filter(a=>a.triggerType!=='DAILY_REPORT').slice(0,6);
   document.getElementById('recent-list').innerHTML = list.length
@@ -490,7 +489,6 @@ function renderRecent() {
     : `<div class="empty"><div class="empty-icon">🌸</div><div>Không có cảnh báo nào</div></div>`;
 }
 
-// ── ALL ALERTS ────────────────────────────────────────────
 function renderAllAlerts() {
   let list = allAlerts;
   if (curFilter==='ERROR') list=allAlerts.filter(a=>a.type==='ERROR'||a.type==='UNSETTLED');
@@ -502,7 +500,6 @@ function renderAllAlerts() {
     : `<div class="empty"><div class="empty-icon">🌸</div><div>Không có mục nào</div></div>`;
 }
 
-// ── BILLING ───────────────────────────────────────────────
 function renderBilling() {
   const reps=allAlerts.filter(a=>a.triggerType==='DAILY_REPORT'&&!a.read&&a.payAmt>0);
   if (!reps.length) {
@@ -552,7 +549,6 @@ function renderBilling() {
   document.getElementById('billing-list').innerHTML=html;
 }
 
-// ── STATUS LIST ───────────────────────────────────────────
 function renderStatusList() {
   const source = allStatus.length ? allStatus : buildStatusFromAlerts();
   let list = source;
@@ -603,7 +599,6 @@ function buildStatusFromAlerts() {
   return Object.values(map);
 }
 
-// ── ACTIONS ───────────────────────────────────────────────
 function markRead(id, el) {
   const a=allAlerts.find(x=>x.id===id);
   if (a&&!a.read) {
@@ -646,7 +641,6 @@ function setStatusFilter(f,btn) {
 
 function fmt(n){return Math.round(n||0).toLocaleString('vi-VN')+' ₫';}
 
-// ── INIT ──────────────────────────────────────────────────
 loadData();
 setInterval(loadData, 5*60*1000);
 </script>

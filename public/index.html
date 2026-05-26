@@ -501,7 +501,7 @@ function renderAllAlerts() {
 }
 
 function renderBilling() {
-  const reps=allAlerts.filter(a=>a.triggerType==='DAILY_REPORT'&&!a.read&&a.payAmt>0);
+  const reps=allAlerts.filter(a=>!a.read && a.payAmt > 0);
   if (!reps.length) {
     document.getElementById('billing-list').innerHTML=`<div class="empty"><div class="empty-icon">🌸</div><div>Không có khoản nào cần thanh toán</div></div>`;
     return;

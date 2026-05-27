@@ -110,6 +110,7 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,'Segoe UI'
 .filter-bar::-webkit-scrollbar{display:none;}
 .fbtn{padding:5px 12px;border-radius:20px;border:1px solid var(--pink-mid);background:transparent;color:var(--muted);font-size:12px;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .15s;}
 .fbtn.active{background:linear-gradient(135deg,#e91e8c,#f06292);border-color:transparent;color:#fff;}
+.fbtn-read-all{background:var(--success); color:white; border-color:transparent; font-weight:600;}
 
 /* ── BILLING ── */
 .billing-card{background:var(--surface);border:1px solid var(--pink-mid);border-radius:var(--r);padding:14px;margin-bottom:10px;}
@@ -209,6 +210,7 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,'Segoe UI'
       <button class="fbtn" onclick="setFilter('DAILY_REPORT',this)">📋 Báo cáo</button>
       <button class="fbtn" onclick="setFilter('OK',this)">✅ OK</button>
       <button class="fbtn" onclick="setFilter('UNREAD',this)">🔴 Chưa đọc</button>
+      <button class="fbtn fbtn-read-all" onclick="markAllRead()">✔ Đọc tất cả</button>
     </div>
     <div id="all-alerts-list"></div>
   </div>
@@ -608,6 +610,24 @@ function markRead(id, el) {
     updateBadge(); renderMetrics();
     fetch(SCRIPT_URL+'?action=markRead&id='+id).catch(()=>{});
   }
+}
+
+// ── HÀM ĐÁNH DẤU TẤT CẢ ĐÃ ĐỌC (MỚI THÊM) ────────────────
+function markAllRead() {
+  const unreadCount = allAlerts.filter(a => !a.read).length;
+  if (unreadCount === 0) {
+    alert('Bạn không có thông báo mới nào để xóa!');
+    return;
+  }
+  
+  if (!confirm('Bạn có chắc muốn dọn sạch tất cả thông báo chưa đọc?')) return;
+  
+  // Cập nhật ngay trên màn hình cho nhanh
+  allAlerts.forEach(a => a.read = true);
+  renderAll();
+  
+  // Bắn lệnh lên Google Sheets chạy ngầm
+  fetch(SCRIPT_URL + '?action=markAllRead').catch(()=>{});
 }
 
 function updateBadge() {
